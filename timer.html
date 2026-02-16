@@ -59,17 +59,49 @@
         .highlight { color: #e74c3c; font-weight: bold; }
         .stage-box { background: #eee; padding: 5px 10px; border-radius: 5px; margin-top: 5px; font-size: 0.85rem; }
 
-        /*C版權*/
-        .copyright {
-            font-size: 0.8rem;          /* 字體大小 */
-            color: rgba(255, 255, 255, 0.8); /* 半透明白色，適合深色背景 */
-            text-align: center;         /* 置中對齊 */
-            margin-top: 20px;           /* 與上方內容保持距離 */
-            margin-bottom: 10px;        /* 與頁面底部保持距離 */
-            letter-spacing: 1px;        /* 字距微調 */
-            font-family: sans-serif;    /* 標準無襯線字體 */
+
+        .footer-area {
+            text-align: center;
+            margin-top: 30px;
+            margin-bottom: 10px;
+            font-family: 'Segoe UI', sans-serif;
         }
-</style>
+
+        .contact-info {
+            margin-bottom: 15px;
+        }
+
+        .contact-item {
+            font-size: 0.9rem;
+            color: rgba(255, 255, 255, 0.9);
+            margin-bottom: 6px;
+        }
+
+        /* 聯絡連結樣式 */
+        .contact-item a {
+            color: #ffeaa7; /* 醒目的淡黃色 */
+            text-decoration: none;
+            font-weight: bold;
+            transition: 0.3s;
+        }
+
+        .contact-item a:hover {
+            color: #ffffff;
+            text-decoration: underline;
+        }
+
+        /* 版權文字樣式 */
+        .copyright {
+            font-size: 0.8rem;
+            color: rgba(255, 255, 255, 0.6); /* 較淡的顏色，區分主要資訊 */
+            letter-spacing: 1px;
+            border-top: 1px solid rgba(255, 255, 255, 0.2); /* 加上細分隔線 */
+            padding-top: 10px;
+            display: inline-block;
+            min-width: 200px;
+        }
+
+
     </style>
 </head>
 <body>
@@ -119,9 +151,24 @@
         <div class="stage-box">第一階段 (0-50%): 正常響鈴 (每 0.8s 響一次)</div>
         <div class="stage-box" style="color:#d4a017">第二階段 (50-75%): 黃色快閃 (每 0.5s 響一次)</div>
         <div class="stage-box" style="color:red">第三階段 (75-100%): 紅色急閃 (每 0.3s 響一次)</div>
-    </div>
+        
+</div> 
+
+    <div class="footer-area">
+        <div class="contact-info">
+            <div class="contact-item">
+                聯絡 Email：<a href="mailto:logistics@gmail.com">logistics@gmail.com</a>
+            </div>
+            <div class="contact-item">
+                Instagram：<a href="https://www.instagram.com/logisicswu6" target="_blank">@logisicswu6</a>
+            </div>
+        </div>
         <div class="copyright">
-        &copy; 2026 計時器 製作人:🚚物流 版權所有
+            &copy; 2026 計時器 製作人:🚚物流 版權所有
+        </div>
+    </div>
+</div>
+
     </div>
 
     <script>
@@ -272,5 +319,6 @@
     </script>
 </body>
 </html>
+
 
 
