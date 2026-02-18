@@ -4,6 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>修仙提醒系統</title>
+    
+    <link rel="icon" href="https://i.postimg.cc/3RHzVvrZ/weplay修仙.png">
+
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
@@ -36,12 +39,17 @@
 
         .controls { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
         button { padding: 12px; font-size: 1rem; cursor: pointer; border: none; border-radius: 10px; transition: 0.3s; font-weight: bold; }
+        
+        /* 設定為長條狀 */
+        #mainControlBtn, #testOrDismissBtn { grid-column: span 2; }
+        
         .btn-start { background-color: #2ecc71; color: white; }
         .btn-stop { background-color: #e74c3c; color: white; }
-        .btn-dismiss { background-color: #f39c12; color: white; grid-column: span 2; }
-        .btn-test { background-color: #3498db; color: white; grid-column: span 2; }
+        .btn-dismiss { background-color: #f39c12; color: white; }
+        .btn-test { background-color: #3498db; color: white; }
+        
         button:hover { transform: translateY(-2px); opacity: 0.9; }
-        button:disabled { background-color: #bdc3c7; cursor: not-allowed; transform: none; }
+        button:disabled { background-color: #bdc3c7; cursor: not-allowed; transform: none; display: none; }
 
         .sound-toggle { margin-bottom: 15px; display: flex; align-items: center; justify-content: center; gap: 8px; font-weight: bold; color: #2d3436; }
 
@@ -53,47 +61,17 @@
         .info h3 { border-bottom: 2px solid #6c5ce7; margin-bottom: 10px; padding-bottom: 5px; color: #6c5ce7; }
         .highlight { color: #e74c3c; font-weight: bold; }
         .stage-box { background: #eee; padding: 5px 10px; border-radius: 5px; margin-top: 5px; font-size: 0.85rem; }
-                .footer-area {
-            text-align: center;
-            margin-top: 30px;
-            margin-bottom: 10px;
-            font-family: 'Segoe UI', sans-serif;
-        }
-
-        .contact-info {
-            margin-bottom: 15px;
-        }
-
-        .contact-item {
-            font-size: 0.9rem;
-            color: rgba(255, 255, 255, 0.9);
-            margin-bottom: 6px;
-        }
-
-        /* 聯絡連結樣式 */
-        .contact-item a {
-            color: #ffeaa7; /* 醒目的淡黃色 */
-            text-decoration: none;
-            font-weight: bold;
-            transition: 0.3s;
-        }
-
-        .contact-item a:hover {
-            color: #ffffff;
-            text-decoration: underline;
-        }
-
-        /* 版權文字樣式 */
+        
+        .footer-area { text-align: center; margin-top: 30px; margin-bottom: 10px; font-family: 'Segoe UI', sans-serif; }
+        .contact-info { margin-bottom: 15px; }
+        .contact-item { font-size: 0.9rem; color: rgba(255, 255, 255, 0.9); margin-bottom: 6px; }
+        .contact-item a { color: #ffeaa7; text-decoration: none; font-weight: bold; transition: 0.3s; }
+        .contact-item a:hover { color: #ffffff; text-decoration: underline; }
         .copyright {
-            font-size: 0.8rem;
-            color: rgba(255, 255, 255, 0.6); /* 較淡的顏色，區分主要資訊 */
-            letter-spacing: 1px;
-            border-top: 1px solid rgba(255, 255, 255, 0.2); /* 加上細分隔線 */
-            padding-top: 10px;
-            display: inline-block;
-            min-width: 200px;
+            font-size: 0.8rem; color: rgba(255, 255, 255, 0.6); letter-spacing: 1px;
+            border-top: 1px solid rgba(255, 255, 255, 0.2); padding-top: 10px;
+            display: inline-block; min-width: 200px;
         }
-
     </style>
 </head>
 <body>
@@ -111,55 +89,43 @@
         </div>
 
         <div class="controls">
-            <button class="btn-start" onclick="startAlarm()">啟動鬧鐘</button>
-            <button class="btn-stop" onclick="stopAlarm()">停止鬧鐘</button>
-            <button id="dismissBtn" class="btn-dismiss" onclick="dismissAlarm()" disabled>停止目前響鈴</button>
-            <button class="btn-test" onclick="testAlarm()">測試鬧鐘功能</button>
+            <button id="mainControlBtn" class="btn-start" onclick="toggleAlarm()">啟動鬧鐘</button>
+            <button id="testOrDismissBtn" class="btn-test" onclick="handleTestOrDismiss()">測試鬧鐘功能</button>
         </div>
     </div>
 
     <div class="info">
         <h3>系統規則與任務表</h3>
-        
         <p><strong>1. 點結晶提醒 (自動切換邏輯)：</strong></p>
         <ul>
             <li>週一至週六：07:55 觸發鬧鐘</li>
             <li>週日固定：<span class="highlight">09:50</span> 觸發鬧鐘</li>
             <li>鬧鐘時長：20 分鐘 (其餘任務均為 2 分鐘)</li>
         </ul>
-        
         <p style="margin-top: 10px;"><strong>2. 每日固定任務表：</strong></p>
         <ul>
             <li>打秘境：每日 10:00 至 23:00 之間每小時整點</li>
             <li>打靈泉：每日 11:00, 13:00, 15:00, 17:00, 19:00, 21:00 整點</li>
             <li>深夜任務 (00:00)：包含 00:00 整點秘境 (週六深夜除外)</li>
         </ul>
-
         <p style="margin-top: 10px;"><strong>3. 禁響與例外時間：</strong></p>
         <ul>
             <li>每日凌晨禁響：01:00 至 07:00 (系統不自動啟動)</li>
             <li><span class="highlight">週六特殊禁響：00:00 (週六跨週日深夜不響鈴)</span></li>
         </ul>
-
         <p style="margin-top: 10px;"><strong>4. 鬧鐘三階段提醒機制：</strong></p>
         <div class="stage-box">第一階段 (0至10分鐘)：正常響鈴 (每 0.8s 響一次)</div>
         <div class="stage-box" style="color:#d4a017">第二階段 (10至15分鐘)：黃色快閃 (每 0.5s 響一次)</div>
         <div class="stage-box" style="color:red">第三階段 (15至20分鐘)：紅色急閃 (每 0.3s 響一次)</div>
     </div>
+
     <div class="footer-area">
         <div class="contact-info">
-            <div class="contact-item">
-                聯絡 Email：<a href="mailto:logistics@gmail.com">logistics@gmail.com</a>
-            </div>
-            <div class="contact-item">
-                Instagram：<a href="https://www.instagram.com/logisticswu6/" target="_blank">@logisticswu6</a>
-            </div>
+            <div class="contact-item">聯絡 Email：<a href="mailto:logistics@gmail.com">logistics@gmail.com</a></div>
+            <div class="contact-item">Instagram：<a href="https://www.instagram.com/logisticswu6/" target="_blank">@logisticswu6</a></div>
         </div>
-        <div class="copyright">
-            &copy; 2026 計時器 製作人:🚚物流 版權所有
-        </div>
+        <div class="copyright">&copy; 2026 計時器 製作人:🚚物流 版權所有</div>
     </div>
-</div>
 
     <script>
         let alarmActive = false;
@@ -176,7 +142,6 @@
         const secretDungeonHours = [10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23];
 
         function getCrystalMinutes(date) {
-            // 週日 (0) 改為 9:50 (9*60 + 50 = 590)
             return date.getDay() === 0 ? 590 : 475;
         }
 
@@ -184,7 +149,7 @@
             const h = date.getHours();
             const d = date.getDay();
             if (h >= 1 && h < 7) return true;
-            if (d === 6 && h === 0) return true; 
+            if (d === 6 && h === 0) return true;
             return false;
         }
 
@@ -229,7 +194,10 @@
             const statusEl = document.getElementById('status');
             statusEl.textContent = `鬧鐘中：${taskName}\n(總時長：${duration/60000} 分鐘)`;
             statusEl.classList.add('active');
-            document.getElementById('dismissBtn').disabled = false;
+            
+            const testBtn = document.getElementById('testOrDismissBtn');
+            testBtn.textContent = "停止目前響鈴";
+            testBtn.className = "btn-dismiss";
             
             if (document.getElementById('soundToggle').checked) playSound();
         }
@@ -317,21 +285,41 @@
 
         function dismissAlarm() {
             alarmTriggered = false;
-            document.getElementById('dismissBtn').disabled = true;
             document.getElementById('status').classList.remove('active');
-            document.getElementById('status').textContent = "等待下一個鬧鐘中...";
+            document.getElementById('status').textContent = alarmActive ? "等待下一個鬧鐘中..." : "鬧鐘已停止";
             document.getElementById('countdownDisplay').classList.remove('show');
             document.body.classList.remove('flash-yellow', 'flash-red');
             document.body.style.background = 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)';
             document.getElementById('progressFill').style.width = '0%';
+            
+            const testBtn = document.getElementById('testOrDismissBtn');
+            testBtn.textContent = "測試鬧鐘功能";
+            testBtn.className = "btn-test";
+        }
+
+        function toggleAlarm() {
+            if (!alarmActive) startAlarm(); else stopAlarm();
         }
 
         function startAlarm() { 
             if (audioContext.state === 'suspended') audioContext.resume();
             alarmActive = true; 
+            const btn = document.getElementById('mainControlBtn');
+            btn.textContent = "停止鬧鐘"; btn.className = "btn-stop";
             dismissAlarm(); 
         }
-        function stopAlarm() { alarmActive = false; dismissAlarm(); document.getElementById('status').textContent = "鬧鐘已停止"; }
+
+        function stopAlarm() { 
+            alarmActive = false; 
+            const btn = document.getElementById('mainControlBtn');
+            btn.textContent = "啟動鬧鐘"; btn.className = "btn-start";
+            dismissAlarm(); 
+        }
+
+        function handleTestOrDismiss() {
+            if (alarmTriggered) dismissAlarm(); else testAlarm();
+        }
+
         function testAlarm() { 
             if (audioContext.state === 'suspended') audioContext.resume();
             if (!alarmTriggered) triggerAlarm(120000, "測試鬧鐘"); 
